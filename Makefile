@@ -1,9 +1,11 @@
-FC = mpif90 -DMPI
-FFLAGS +=  -w -O3
+FC = mpif90 -DMPI 
+FC = gfortran
+FFLAGS +=  -w -O3 -ffree-line-length-none -fPIC
 
  
 AR = ar r  
-LINKLIB = ld -shared  
+#LINKLIB = ld -shared -soname libgfortran.so.3
+LINKLIB = gfortran -shared -llapack -lpthread
 LIBDIR = ./
  
 NSOBJECTS = utils.o utils1.o priors.o kmeans_clstr.o xmeans_clstr.o posterior.o nested.o
@@ -15,7 +17,7 @@ NSOBJECTS = utils.o utils1.o priors.o kmeans_clstr.o xmeans_clstr.o posterior.o 
 	$(FC) $(FFLAGS) -c -o $@ $^ 
 
  
-all: libnest3.a  obj_detect eggbox gauss_shell 
+all: libnest3.a libnest3.so obj_detect eggbox gauss_shell 
  
 libnest3.so: $(NSOBJECTS) 
 	$(LINKLIB) -o $(LIBS) $@ $^ 
